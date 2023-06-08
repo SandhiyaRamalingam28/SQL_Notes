@@ -1,0 +1,160 @@
+--------NULL FUNCTIONS------------
+
+/*NVL Function*/
+select nvl(null,50) value from dual;
+
+select cust_name, nvl(email_id, 'Nil') email from customer;
+
+/*NVL2 Function.*/
+
+select nvl2(null,25,50) value from dual; ----1st arg value is null, so it prints 3rd arg value------
+
+select nvl2(10,25,50) value from dual; ----1st arg value is  not null, so it prints 2rd arg value------
+
+select cust_name, nvl2(city, 'Kovai','Chennai') email from customer;
+
+/*NVLIF Function.*/
+
+select nullif(50,50) value from dual; ----------print null-----
+
+select nullif(50,40) value from dual;
+
+select nullif(null,null) from dual; ------It shows error if both arg are null. Either one arg must have value-------
+select nullif(25,null) from dual;
+select nullif(null,35) from dual;
+
+
+/*COALESCE FUNCTION*/
+
+select coalesce(null,null,4,null,90,null) value from dual;
+select coalesce(null,null,990,null,91,null) value from dual;
+
+
+---------STRING FUNCTION---------------
+
+/*Length*/
+select cust_name, length(cust_name) length_value from customer;
+
+/*Reverse*/
+select cust_name, reverse(cust_name)reverse_name from customer;
+
+/*SUBSTRING -> substr(arg,start_position,no_of_length)*/
+select cust_name, substr(cust_name,2,4) from customer;
+
+/*INSTR*/
+select cust_name,instr(cust_name,'a',3,1)Find_string_position from customer;
+
+/*REPLACE*/
+select cust_name,replace(cust_name,'i','o')Find_string_position from customer;
+
+/*TRANSLATE*/
+select cust_name,translate(cust_name,'ae','s2')Find_string_position from customer;
+
+/*LPAD*/
+select cust_name,lpad(cust_name,10,'*')value from customer;
+
+/*RPAD*/
+select cust_name,rpad(cust_name,10,'*')value from customer;
+
+/*LTRIM*/
+select cust_name,ltrim(cust_name,'s')value from customer;
+
+/*RTRIM*/
+select cust_name,rtrim(cust_name,'a')value from customer;
+
+/*LEADING-TRIM*/
+select city,trim(leading 'C' from city)Starting_position from customer;
+
+/*TRAILING-TRIM*/
+select city,trim(trailing 'i' from city)Ending_position from customer;
+
+/*BOTH-TRIM*/
+select cust_name,trim(both 'm' from email_id)Starting_position from customer;
+
+/*LOWER*/
+select city, lower(city) from customer;
+
+/*UPPER*/
+select email_id, upper(email_id)EMAIL from customer;
+
+/*INITIAL-CAPITAL LETTER*/
+select email_id, initcap(email_id) EMAIL from customer;
+
+
+----------NUMBER FUNCTION-------------------
+
+/*ROUND-OFF-DECIMAL*/
+select round(24.528,2)value from dual;
+
+/*TRUNCATE*/
+select TRUNC(24.528,2)value from dual;
+
+/*FLOOR*/
+select floor(24.528)value from dual; --only base value--
+
+/*CEIL - ROUND-OFF*/
+select ceil(24.528)value from dual; --only base value--
+
+/*MODULUS*/
+select cust_salary, mod(cust_salary,3) from customer_details;
+
+/*ABS*/
+select abs(-24285)abs_value from dual;
+select abs(24285)abs_value from dual;
+
+/*SIGN*/
+select sign(-24285)signs from dual;
+select sign(24285)signs from dual;
+
+/*POWER*/
+select power(2,3)power_value from dual;
+
+/*SQUARE-ROOT*/
+select sqrt(25.6)square_value from dual;
+select sqrt(25)square_value from dual;
+
+
+-----------------------DATE FUNCTION--------------------
+
+/*SYSTEM DATE*/
+select sysdate from customer;
+select sysdate from customer_details;
+select sysdate from job;
+select sysdate from dual;
+
+/*ADD-MONTHS*/
+select add_months(sysdate,1) from customer;
+select add_months(sysdate,-1) from customer;
+select add_months(DATE '2023-05-28',1) from customer; ---date format be given same as demo---
+select add_months(DATE '2023-05-28',-1) from customer; ---date format be given same as demo---
+
+/*MONTHS_BETWEEN*/
+select MONTHS_BETWEEN(date '1996-05-24', date '2000-05-28')months from dual;
+
+/*NEXT_DAY*/
+select next_day(sysdate, 'sunday')  from dual;
+
+/*LAST_DAY*/
+select last_day(date '2000-05-28')  from dual;
+
+/*ROUND*/
+select round(sysdate, 'DAY')  from dual;
+select round(date '2000-05-27','month')  from dual;
+
+/*TRUNC*/
+select trunc(sysdate, 'DAY')  from dual;
+select trunc(date '2000-05-27','month')  from dual;
+select trunc(date '2000-05-27','Year')  from dual;
+
+
+---------------CONVERSION FUNCTION----------------
+
+/*TO_CHAR*/
+select joining_date, to_char(joining_date,'dd')date_num from customer_details;
+select joining_date, to_char(joining_date,'ddd')days from customer_details;
+select joining_date, to_char(joining_date,'day')Which_day from customer_details;
+select joining_date, to_char(joining_date,'dy')Which_day from customer_details;
+select joining_date, to_char(joining_date,'D')day_numbers from customer_details;
+select joining_date, to_char(joining_date,'MM')mon_num from customer_details;
+select joining_date, to_char(joining_date,'MON')mon_name from customer_details;
+select joining_date, to_char(joining_date,'MONTH')mon_name from customer_details;

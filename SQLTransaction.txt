@@ -1,0 +1,101 @@
+TRANSACTION
+
+		# Transaction is a set of logically related opertaion.
+		# It contains group of tasks.
+		# A Transaction is an action or series of actions.
+		# It is performed by a single user to perform operations for accessing the contents of the data base.
+		
+Operations of Transsaction:
+		# Read
+		# Write
+		# Commit
+		# Rollback
+		
+Read(x)
+		# Read operations is used to read the value of x from the database and stores it in buffer in main memory.
+Write(x)
+		# Write operation in used to write the value back to the database from the buffer.
+		
+		Example
+		# R(X);
+		# X=x-500;
+		# W(X);
+Commit
+		# It is used to save the work done permanently.
+Rollback
+		# It is used to undo the work done.
+		
+Transaction Properties: (ACID)
+		1.Atomicity
+		2.Consistency
+		3.Isolation
+		4.Durability 
+		
+1.Atomicity
+		# It states that all the operations of transaction take place at once if not,the transaction is aborted .
+		# There is no midway--the transaction cannot occur partially.
+		# Each transaction is treated as one unit and either run to completion or is not executed at all.
+		
+		Operations
+				# Abort-If the transaction is aborts then all the changes made are not visible.
+				# Commit-If a transaction commits then all the changes made are visible.
+				
+				
+2.Consistency
+
+		# It means the data in the data base should be correct before and after transaction.It is called consistency.
+		# Referes the correctness of data base.
+		
+3.Isolation
+
+		# to avoid inconsistency have to use Isolation property.
+		# cannot use the data in second transaction is exccuted ,until the first on is completed.
+		
+4.Durability
+
+		# It refers the data base consistency called durability.
+		# The changes may be consitent or inconsistent.
+		
+		
+		
+PROPERTY	    RESPONSIBILITY FOR MAINTAINING PROPERTIES
+Atomicity ->	Transaction Manager
+Consistency	->  Application Programmer
+Isolation ->	Concurrency Control Manager
+Durability	->  Recovery Manager
+
+
+		
+TRANSACTION STATES.
+		1.Active state.
+		2.Partially Committed.
+		3.Committed state.
+		4.Failed state.
+		5.Aborted state.
+		
+		
+1.Active state
+			# First state of transaction.
+			# It start to execute.
+			# Insertion,Updation,Deletion .
+			# if it is failed goes to failed state.
+			# if it is correct goes to partially comitted.
+			
+2.Partially Comitted
+			# Executes all the Read and Write operations.
+			# changes or made in main memory or local buffer.
+			# If the changes are in permanent in database  then it goes to Comitted state.
+			# In case of failure it will go to failure state.
+			
+			
+3.Comitted state
+			# all the changes stored in permanantly in data base ,then the transaction goes to the Comitted state.
+			
+			
+4.Failed state.
+			# The error occurs while transaction instruction failed or While storing the database permanently failed,then it goes to failed state.
+5.Aborted state
+
+			# failed state transaction goes to Aborted state.
+			# In this state, the changes made while transaction process in local buffer,all will be roll back.
+			# so data will be consistent.

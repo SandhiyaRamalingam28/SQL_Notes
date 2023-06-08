@@ -1,0 +1,112 @@
+create table job(
+    job_id number,
+    job_name varchar2(50)
+);
+
+create table customer_details(
+    cust_card_id varchar2(15),
+    email_id varchar2(30),
+    cust_name varchar2(20),
+    job_id number references job(job_id),
+    job_desgination varchar2(25),
+    cust_salary number,
+    city varchar2(50),
+    working_city varchar2(50)
+);
+
+create table customer(
+    cust_id number(3),
+    cust_name varchar2(20),
+    mobile_no varchar2(10),
+    city varchar2(20),
+    email_id varchar2(30)
+);
+
+drop table customer;
+drop table customer_details;
+
+select * from job;
+select * from customer_details order by cust_card_id;
+select * from customer order by cust_id;
+
+insert into customer values(1,'sandhiya',9876543210,'Coimbatore','sandhiya@gmail.com','India',101,1);
+insert into customer values(2,'moni',9087658764,'Coimbatore','moni@gmail.com','India',102,2);
+insert into customer values(3,'tamil',9123456780,'Arali','tamil@gmail.com','India',103,3);
+insert into customer values(4,'Deepika',8765098123,'Kallakurichi','deepi@gmail.com','India',104,1);
+insert into customer values(5,'aarthi',9876512345,'Theni','aarthi@gmail.com','India',105,2);
+insert into customer values(6,'saranya',9192939495,'Udumalpet','saran@gmail.com','India',106,3);
+insert into customer(cust_id,cust_name) values(7,'sandy');
+
+
+
+insert into customer_details values(101,'sandhiya@gmail.com','sandhiya','1','Developer',250000,'Coimbatore','Coimbatore');
+insert into customer_details values(102,'moni@gmail.com','moni','2','.Net Developer',550000,'Coimbatore','Coimbatore');
+insert into customer_details values(103,'tamil@gmail.com','tamil','3','SOADeveloper',350000,'Arali','Coimbatore');
+insert into customer_details values(104,'deepi@gmail.com','Deepika','1','Developer',250000,'Kallakurichi','Coimbatore');
+insert into customer_details values(105,'aarthi@gmail.com','aarthi','2','.Net Developer',450000,'Theni','Coimbatore');
+insert into customer_details values(106,'saran@gmail.com','saranya','3','Developer',950000,'Udumalpet','Chennai');
+insert into customer_details values(107,'dhiya@gmail.com','dhiya','1','Developer',250000,'Coimbatore','Coimbatore',date '2022-05-28');
+
+
+update customer set cust_card_id=2 where cust_id=2;
+
+update customer_details set job_id=1 where cust_card_id=104;
+
+update customer set country='India';
+
+update customer_details set joining_date =date '2015-04-12' where cust_card_id=106;
+
+delete customer where cust_id=1;/* Remove semicolon to run delete command*/
+
+alter table customer add country varchar2(25); /* Remove semicolon to run alter table. orelse it will show invalid alter table*/
+
+alter table customer add primary key(cust_id);
+
+alter table customer_details add joining_date date;
+
+alter table customer add job_id number references job(job_id);
+
+alter table customer_details add primary key(cust_card_id);
+
+alter table customer add cust_card_id references customer_details(cust_card_id);
+
+alter table job drop column joining_date;
+
+desc customer;/* To show the table structure*/
+desc job;
+desc customer_details;
+
+/*Cross Join*/
+select * from customer;
+select * from job;
+
+select cust_name, job_name from customer cross join job;
+select * from customer cross join job;
+
+/*Inner Join*/
+
+select * from customer,job where customer.job_id=job.job_id ;
+
+select c.cust_id,c.cust_name,j.job_id,j.job_name from customer c,job j where c.job_id=j.job_id;
+
+select c.cust_id, c.cust_name,d.cust_card_id, d.job_desgination from customer c, customer_details d where c.cust_name = d.cust_name;
+
+
+/*Left Outer Join*/
+
+select c.cust_id,c.cust_name,d.cust_card_id,d.job_desgination,d.city from customer c left join customer_details d on c.email_id=d.email_id;
+
+select * from  customer c left join customer_details d on c.email_id=d.email_id;
+
+/*Right Outer Join*/
+
+select c.cust_id,c.cust_name,d.cust_card_id,d.job_desgination,d.city,d.email_id from customer c right join customer_details d on c.email_id=d.email_id;
+
+/*Full Outer Join*/
+
+select c.cust_id,c.cust_name,d.cust_card_id,d.job_desgination,d.city,d.email_id from customer c full outer join customer_details d on c.email_id=d.email_id;
+
+/*Self Join*/
+
+select c.cust_name,d.job_desgination,d.email_id from customer c join customer_details d on c.email_id=d.email_id;
+

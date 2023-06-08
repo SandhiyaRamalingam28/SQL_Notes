@@ -1,0 +1,564 @@
+										ORACLE DATABASE - SQL
+
+DataType:
+	* Numeric - int, double, decimal, float, number.
+		Number:
+			# number(3)[can only store 3 numbers only]
+			# number(5,2) - 993.34 [only store 5 numbers, in that 2 numbers are decimals]
+			# number(2,2) - 0.99 [only store 2 numbers, that are only decimals]
+			
+	* character:
+		# char - will occupy null spaces [2000 bytes]
+		# varchar() - now deprecated [2000 bytes]
+		# varchar2() - will not occupy null spaces [4000 bytes]
+		
+	* Date:
+		# date - default 28-April-23
+		# date - to_date('04/28/2023','mm/dd/yyyy')
+		
+	* LOB(Large OBjects):
+		# stored in terms of GB.
+		# upto 2 GB - character more than 4000 bytes.
+		# Accepts - audio file, video file, Image file.
+		
+		=> CLOB [Character Large OBjects]: character more than 4000 bytes
+		=> BLOB [Binary Large OBjects]: audio, video, image file.
+		
+========================================================================================================
+
+SQL (Sequential Query Language):
+
+* Data Definition Language [DDL]  - (CART D)  - Auto Commit
+	# Create
+	# Alter
+	# Rename
+	# Truncate - delete the data in the table.
+	# Drop
+	
+* Data Manipulation Language [DML] - (IU DM) - User commit
+	# Insert
+	# Update
+	# Delete
+	# Merge
+	
+* Data Retrival Language [DRL] 
+	# Select
+	
+* Transaction Control Language [TCL] - (CRS)
+	# Commit - save
+	# Rollback - undo
+	# Savepoint - bookmark for set of statements.
+	
+* Data Control Language [DCL] - (GR)
+	# Grant
+	# Revoke
+	
+===================================================================================================
+
+Example:
+
+# Create a table
+
+create table customer(
+	cust_id number(3),
+	cust_name varchar2(20),
+	mobile_no varchar2(10),
+	dob date,
+	city varchar2(10),
+	email_id varchar2(30)
+);
+
+# different types of insert to add the values in table:
+
+=>  insert into customer values(1,'sandhiya',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+
+=>  insert into customer values(1,'sandhiya',null,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+
+=>  insert into customer(cust_id,cust_name,mobile_no,dob,city,email_id) values(1,'sandhiya',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+
+=>  insert into customer(cust_id,cust_name,dob,city,email_id) values(1,'sandhiya',to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+
+# DRL
+
+select * from customer;
+
+
+# different types of update to update the table:
+
+=>  update customer set city='Chennai'; // it will update the city in all column as chennai in the table.
+
+=>  update customer set city='Chennai' where cust_id=1; // it will update the particular id's column.
+
+
+# add the column in the existing table:
+
+alter table customer add country varchar2(25);
+
+
+# drop the column in the table:
+
+alter table customer drop column city; // the city column will be permanently deleted from the table structure.
+
+# datatype number size can be altered:
+
+=> number(3) is referred as datatype for cust_id
+=> it can be altered by incrementing the size of datatype.
+
+----
+		alter table customer modify cust_id number(5); 
+		
+-----
+=> NOTE: the size of datatype can be only increased and cannot decrement it.
+
+# How to backup the table to modify the datatype in table:
+	=> Take backup the table and Truncate the data and modify the datatype.
+	
+	* backup the table
+	* Truncate base table
+	* modify the datatype
+	* Restore the data
+	* drop the backup table.
+	
+=> Backup the table : 
+			create table customer_backup as select * from customer;
+			
+=> Truncate base table:
+			truncate table customer;
+			
+=> Modify the datatype in customer table:
+			alter table customer modify mobile_no number(15);
+			
+=> Restore the data:
+			insert into customer(select * from customer_backup);
+			
+			commit; // DML statements...so use commit to save the data. 
+			
+=> Drop the backup table:
+			drop table customer_backup;
+			
+			
+			
+# DELETE VS TRUNCATE:
+
+Delete : 
+
+	=> SYNTAX: delete from customer_backup; // for deleting the entire data
+	=> SYNTAX: delete from customer_backup where cust_id=2; // deleting the particular data
+	=> DML -> rollback can be done
+	=> delete the entire data or can delete the particular data by using where condition.
+	
+Truncate :
+
+	=> SYNTAX: truncate from customer_backup;
+	=> DDL -> auto commit
+	=> Truncate will only delete the entire data permanently.
+	
+
+#different types of Rename can be used in table:
+
+	=> Rename the existing table:
+		* SYNTAX: rename customer_backup to customer_bkp;
+		
+	=> Rename the column:
+		*SYNTAX: alter table Customer rename column dob to date_of_birth;
+		
+
+#Savepoint:
+	* It act like a bookmark for the set of statements in which rollback can be done.
+	* It is done to a set of statements instead of entire data rollback.
+
+Example:
+
+	insert into customer values(1,'sandhiya',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	insert into customer values(2,'sandy',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	savepoint a;
+	insert into customer values(3,'monika',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'cbe','moni@gmail.com');
+	insert into customer values(4,'moni',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'cbe','moni@gmail.com');
+	savepoint b;
+	insert into customer values(5,'tamil',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'chennai','sandy@gmail.com');
+	insert into customer values(6,'joytamil',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'chennai','sandy@gmail.com');
+	savepoint c;
+	insert into customer values(7,'deepika',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	insert into customer values(8,'deepi',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	savepoint d;
+	insert into customer values(9,'saranya',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	insert into customer values(10,'saran',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	savepoint e;
+	
+	select * from customer;
+	
+	rollback to c; \\ will rollback the below data.
+	
+	OUTPUT:
+	
+	insert into customer values(1,'sandhiya',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	insert into customer values(2,'sandy',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'Coimbatore','sandy@gmail.com');
+	insert into customer values(3,'monika',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'cbe','moni@gmail.com');
+	insert into customer values(4,'moni',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'cbe','moni@gmail.com');
+	insert into customer values(5,'tamil',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'chennai','sandy@gmail.com');
+	insert into customer values(6,'joytamil',9876543210,to_data('05/28/2000'),('mm/dd/yyyy'),'chennai','sandy@gmail.com
+
+	
+	USAGE:
+		* used to rollback particular set of data.
+		* can be used in if else condition to commit or rollback.
+		
+====================================================================================================================================
+
+CONSTRAINTS IN ORACLE:
+
+	* Data validation is done before inserting the data into the table.
+	
+# PRIMARY KEY:
+	* It will not allow duplicate record.
+	* It will not allow null value.
+	* Only one primary key in a table.
+	
+	
+# COMPOSITE KEY:
+	* Combined the Two columns and set as primary key is called as Composite key.
+	* EXAMPLE: cust_id + mobile_no ====> primary key(cust_id,mobile_no)  =====> Composite key.
+	* In this combination it will not allow duplicate values.
+	* Either one of the column can be duplicate.
+	
+	
+# NOT NULL KEY:
+	* Mandatory field.
+	* It will not allow null value.
+	* It will allow duplicate.
+	* EXAMPLE: first_name.
+	
+	
+# UNIQUE KEY:
+	* It will not allow duplicate.
+	* It will allow null value.
+	* But we can write a condition for not null also [unique + not null].
+	* EXAMPLE: mobile number
+	
+	
+# CHECK KEY:
+	* Data validation.
+	* EXAMPLE: check(age >= 18)
+
+	
+# FOREIGN KEY:
+	* Relationship between two table.
+	* It will accept two value
+	* It should be the primary key in another table.
+	* Any number of foreign key in the table.
+	* EXAMPLE: foreign key(city_id) references city(city_id)
+	
+	
+#EXAMPLE: 
+
+	create table city(
+		city_id number(4) primary key,
+		city_name varchar2(25)
+	);
+	
+	create table customer(
+		cust_id number(5) primary key,
+		cust_name varchar2(30) not null,
+		mobile_no number(10) unique check(length(mobile_no)=10),
+		age number(3) check(age>=18),
+		city_id number(4) references city(city_id)
+	);	
+	
+
+=======================================================================================================
+	
+# SELECT:
+
+=> Select * from customer;
+
+=> select cust_id, cust_name, mobile_no from customer;
+
+# COLUMN ALAS:
+
+	=> The name of the column can be changed by using alas and it can be seen when we select and run the particular alas statement.
+	=> Else it will show the normal column name.
+	
+	EXAMPLE: 
+	
+		* select * from customer; \\ normal column
+		
+		\\ ALAS condition:
+		* select cust_id as id, cust_name, mobile_no from customer; // it will show cust_id as id name in column
+		* select cust_id id, cust_name, mobile_no from customer; // it will show cust_id as id name in column
+	
+	
+# COLUMN CONCATENATION:
+
+	=> Concat() will accept only two parameters.
+	
+	EXAMPLE: 
+	 \\ create an extra column as cust_details using alas and concat the column without any spaces.
+	* select cust_id,cust_name,concat(cust_id,cust_name)cust_details,mobile_no,age,city_id from customer;
+	
+	
+	\\ create an extra column as cust_details usind alas and concat the column with white spaces.
+	* select cust_id,cust_name,concat(concat(cust_id,' '),cust_name)cust_details,mobile_no,age,city_id from customer;
+	
+	
+# PIPES: 
+
+	=> Using Pipe symbol (||) the concatenation can be done simple.
+	
+	EXAMPLE: 
+	
+	\\Example for column concatenation:
+	\\ create an extra column as cust_details using alas and concat the column with white spaces.
+	* select cust_id,cust_name,concat(concat(cust_id,' '),cust_name)cust_details,mobile_no,age,city_id from customer;
+	
+	\\Example for column concatenation using pipes:
+	* select cust_id,cust_name,cust_id||' '||cust_name cust_details,mobile_no,age,city_id from customer;
+	
+# COLUMN CALCULATION: 
+
+	* SALARY CALCULATION:
+		# select cust_id,cust_name,mobile_no,age+ 5 alt_age,city from customer;
+		
+	* EVERY DETAILS:
+		# select * from customer;
+		
+	* PARTICULAR COLUMN: 
+		# select cust_id from customer;
+		
+	* DISTINCT VALUES:
+		# select distinct city from customer;
+		
+	* COUNT:
+		\\ count of every cust_id
+		# select count(cust_id) from customer; \\ will not count null values
+		
+		\\ count of distinct cust_id
+		# select count(distinct cust_id) from customer;
+	
+
+=======================================================================================================================================
+
+# JOINS:
+
+	* JOINS is a query that coimbines rows of two or more tables,views or materialized view.
+	* It allows for data to be stored in seperate tables and combined when it is needed.
+	* JOINS  are used to retrieve data from multiple tables.
+	* You need at atleast two tables to create a join.
+	
+	#TYPES OF JOINS:
+		* Cross/cartesian join
+		* Equi/ inner join
+		* Self join
+		* Outer join 
+			-> Left outer join
+			-> Right outer join
+			-> Full outer join
+			
+	==>  Cross/cartesian Join:
+			* Every row from the first table will be multipled to the rows in second table.
+			
+		
+		SYNTAX:
+			select <column_name>,<column_name> from <table1> CROSS JOIN <table2>
+			
+	==> Equ/Inner join:
+			* Inner join returns the matching column values of associated tables.
+			* It will not show null values.
+			
+		SYNTAX:
+			select <column_name>,<column_name> from <table1>,<table2> where table1.column_name = table2.column_name;
+			
+	==> LEFT OUTER JOIN/LEFT JOIN:
+			* Matched data from both tables and unmatched data from left table.
+			* All data from the left table and only matched data from the right table.
+			
+		SYNTAX:
+			select <column_name>,<column_name> from <table1>left join <table2> on table1.column_name = table2.column_name;
+			
+	==> RIGHT OUTER JOIN/RIGHT JOIN:
+			* Matched data from both tables and unmatched data from right table.
+			* All data from the right table and only matched data from the left table.
+			
+		SYNTAX:
+			select <column_name>,<column_name> from <table1>right join <table2> on table1.column_name = table2.column_name;
+			
+	==> FULL OUTER JOIN/FULL JOIN:
+			* Matched and unmatched data from both tables.
+			* All data from the left table and all data from the right table.
+			
+		SYNTAX:
+			select <column_name>,<column_name> from <table1>full outer join <table2> on table1.column_name = table2.column_name;
+			
+			
+	==> SELF JOIN:
+			* Joins the table itself and get the result
+			
+		SYNTAX:
+			select <column_name>,<column_name> from <table1>join <table2> on table1.column_name = table2.column_name;
+			
+			
+================================================================================================================================================================
+
+# SQL FUNCTIONS:
+
+	* SQL Functions must return values.
+	* MAnipulate output data
+	* Perform calculations on data.
+	
+	# DUAL TABLE:
+		* contains one column and one row witj value of X.
+		* It can be accessed by all users in DB.
+		* It is also called as Dummy table.
+		
+	# TYPES OF SQL FUNCTIONS:
+	
+		* Single Row Function.
+		* MultiRow Function.
+		
+		=> Multi Row Function:
+			* Work upon group of rows and return one result for a complete set of rows.
+			* It is also called as Aggregate function or Group function.
+			
+			SQL AGGREGATE FUNCTION:
+				->AVG(), COUNT(), FIRST(), LAST(), MAX(), MIN(), SUM(),...
+				
+				
+		=>Single Row Function:
+			* Work on single row and return one output per row.
+			* Accept arguments(input value) and return one value.
+			* Can be used as a nested function.
+			
+			SYNTAX:
+			
+				Function_name(arguments1, arguments2)
+				
+			# TYPES OF SINGLE ROW FUNCTION:
+				* General/Null function.
+				* Character/String function.
+				* Number function.
+				* Date function.
+				* Conversion function.
+				
+				=> Null function:
+					* Works with any datatype.
+					* Null is not equal to NULL.
+					
+					#TYPES OF NULL FUNCTION:
+						* NVL Function -> Accepts only 2 arguments. If 1st arg is null, then prints 2nd arg. NVL(arg1,arg2)
+						* NVL2 Function -> Accepts only 3 arguments. If 1st arg is null, prints 3rd arg else prints 2nd arg. nvl2(arg1,arg2,arg3)
+						* NULLIF Function -> Accepts only 2 arguments, If both arg are same, then prints NULL, else print 1st arg. nvlif(arg1,arg2)
+						* COALESCE Function -> Accepts 'N' no.of args. It prints 1st not null value. coalesce(arg1,arg2,...,argN)
+						
+				==> String function:
+						* LENGTH -> find the length of the arg. LENGTH(arg)
+						* REVERSE -> reverse the arg. REVERSE(arg)
+						* SUBSTRING [SUBSTR] -> used to get specific portion of arguments. SUBSTR(arg,start_position,no_of_length)
+						* INSTR:
+							-> used to get exact position of arguments
+							-> Always return numeric value.
+							-> If searching string is not found then it will return 0.
+							-> If string is NULL or searching string is NULL, then it will return NULL.
+							-> It is case sensitive.
+							
+						SYNTAX: INSTR(arg,searching_string,start_position,Nth_appearance) -> (start_position,Nth_appearance) is optional.
+						
+						* REPLACE ->used to replace the character with another set of character. REVERSE(arg,replace_what,replace_with)
+						* TRANSLATE ->used to translate the character with another set of character. TRANSLATE(arg,translate_what,translate_with)
+						* LPAD -> used to pads the left-side of a string with specific set of characters. LPAD(arg,padded_length,padding_string)
+						* RPAD -> used to pads the right-side of a string with specific set of characters. RPAD(arg,padded_length,padding_string)
+						* LTRIM -> used to trim a character from left side of a string. LTRIM(arg,trimming_character)
+						* RTRIM -> used to trim a character from right side of a string. RTRIM(arg,trimming_character)
+						* TRIM -> used to trim a character from both side of a string.
+							SYNTAX:
+								-> TRIM(LEADING 'trimming_character' from arg) -> Trim starts from starting position.
+								-> TRIM(TRAILING 'trimming_character' from arg) -> Trim starts from ending position.
+								-> TRIM(BOTH 'trimming_character' from arg) -> Trim starts from both position.
+								
+						* LOWER -> used to convert the set of characters into lowercase. LOWER(arg)
+						* UPPER -> used to convert the set of characters into uppercase. UPPER(arg)
+						* INITCAP -> used to convert the initial character to upper in the set of characters. INITCAP(arg)
+						
+				==> Number Function:
+						* ROUND -> used to round of decimal value to a certain number. ROUND(n,d) -> d - optional
+						* TRUNC -> used to truncate a number to a specific number of decimal places. TRUNC(n,d) -> d-optional
+						* FLOOR -> used to return the whole number less than or equal than a specific number. FLOOR(n)
+						* CEIL -> used to return the whole number greater than or equal than a specific number. CEIL(n)
+						* MOD -> return modulus of a number. MOD(n,m). n-> base number, m-> division number.
+						* ABS -> calculate absolute value of an expression.Returns only positive number. ABS(n)
+						* SIGN -> used to find the +ve and -ve values. SIGN(n)
+						* POWER -> power up the value with another value. POWER(n,m). n-> base value, m->power value number.
+						* SQRT -> get the square root of a given non-negative number. SQRT(n)
+						
+						
+				==> Date Function:
+						* SYSDATE -> system date.
+						* ADD_MONTHS -> add number of month(n). ADD_MONTHS(date_expression,month)
+						* MONTHS_BETWEEN -> get number of months between two dates. MONTHS_BETWEEN(start_date,end_date)
+						* NEXT_DAY -> get the date of weekday specified by day name. NEXT_DAY(date, weekday)
+						* LAST_DAY -> get the last date of the month. LAST_DAY(date)
+						* ROUND -> used to round the date to a specific unit. ROUND(date,format) => format-> day, month,year,...
+								-> If the day is monday,tuesday, wednesday -> shows last sunday date.
+								-> If the day is thursday,friday,saturday -> shows next sunday date.
+						
+						* TRUNC -> used to trunc the date to a specific unit. TRUNC(date,format)
+						
+				==> Conversion Function:
+						-> used to convert the unexpected datatype to a desired datatype.
+						
+							* TO_CHAR -> used to convert numeric or date input to character datatype. TO_CHAR(value,format)
+							DD-DATE 
+								DAY-to print the day 
+								D-day of the week 3-tuesday
+								DDD-year of the day
+								MM-to print the month in numeric
+								MON-aabrivation of the month
+								MONTH-pirnt full month 
+								RM-month in roman
+								WW------which number of week in the year
+								W----which week of the month
+								YY-----if the year want to print in numeric.
+								3 digit----YYY.4---yyyy
+								Q-------if you want to print the date which quater of the year.
+								DDSP-----The date to print wording formate. want  to add Th u can ---TH
+
+								 
+
+								*/
+								create table s(id number, name varchar(20),city varchar(20),phone number,dob date);
+								select * from s;
+								insert into s values(1,'Tamilselvi','Townhall',6381534424,'27-july-2023');
+								select  dob,to_char(dob,'Day') from s; 
+								select  dob,to_char(dob,'DDD') from s; 
+								select  dob,to_char(dob,'MM') from s;
+								select  dob,to_char(dob,'MON') from s;
+								select  dob,to_char(dob,'MONTH') from s;
+								select  dob,to_char(dob,'RM') from s;
+								select  dob,to_char(dob,'WW') from s;
+								select dob,to_char(dob,'W') from s;
+								select dob,to_char(dob,'W') from s;
+								select dob,to_char(dob,'YY') from s;
+								select dob,to_char(dob,'Q') from s;
+								select dob,to_char(dob,'DDSP') from s;
+								-----G-gamma,D-Decimal before last two number
+								select to_char(123.45, '9G99D99') FROM DUAL;----------1,23.45
+								---for $ symbol-----L
+								----C__USD
+								----S---+Symbal
+								select to_char(123.45, 'L9G99D99') FROM DUAL;
+								select to_char(123.45, 'S9G99D99') FROM DUAL;
+								---IF you want the add(0) decimal number with the number.
+								select to_char(123, '999D99') FROM DUAL;
+								---V----if you want to add 0 only after the number
+								select to_char(123, '999V99') FROM DUAL;
+								/*
+								TO_DATE---Used to convert character to DATE datatype.
+								TO_DATE[String,format]
+								*/
+								select to_date('2021-07-30','YYYY-MM-DD') from dual;
+								/*TO_NUMBER---Used to convert character to numeric datatype
+								T0_NUMBER[String,format]
+								*/
+
+								select to_number('$1,25.25','L9G99D99') from dual;
+
+ 
+							
